@@ -23,15 +23,15 @@ export default function Home() {
       right: 'auto',
       bottom: 'auto',
       transform: 'translate(-50%, -50%)',
-      backgroundColor: '#0a0b0d',
+      backgroundColor: 'rgb(17 ,24, 39)',
       padding: 0,
-      border: 'none',
+      border: '1px solid rgb(55, 65, 81)',
       borderRadius: '15px',
       width:'90%',
-      maxWidth:'700px'
+      maxWidth:'700px',
     },
     overlay: {
-      backgroundColor: 'rgba(10, 11, 13, 0.4)',
+      backgroundColor: 'rgba(17, 24, 39, 0.5)',
     },
   }
   // useEffect(() => {
