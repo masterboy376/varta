@@ -1,201 +1,91 @@
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
-import friends from '../public/icons/friends.svg'
-import nitro from '../public/icons/nitro.svg'
-import DmCard from './DmCard'
-import {AiOutlineClose} from 'react-icons/ai'
-import React, {useContext} from 'react'
+import { AiOutlineClose, AiOutlineLoading3Quarters } from 'react-icons/ai'
+import React, { useContext } from 'react'
 import { VartaContext } from '../context/context'
+import FriendCard from './FriendCard'
 
-const styles ={
-  conversations:'h-full w-4/5 overflow-y-scroll bg-gray-900',
-  conversationListTop:'flex w-inherit fixed bg-gray-900 bg-opacity-70 backdrop-blur-sm items-centers justify-between border-b z-10 p-1 sm:p-2 border-gray-700 shadow-2xl',
-  searchInput:'w-full bg-gray-800 hover:border-blue-600 border border-gray-800 rounded-xl outline-none p-2 resize-none text-white',
-  conversationsContainer:'p-2 pt-12 sm:pt-14',
-  elementsContainer:'flex items-center p-1 rounded-xl sursor-pointer hover:bg-gray-800 cursor-pointer',
-  svgContainer:'mr-2',
-  svg:'invert opacity-60 rounded-full',
-  name:'flex-1 h-full opacity-90',
-  post:'opacity-60 text-sm',
-  dmTitle:'opacity-40 font-bold my-3',
+const styles = {
+  conversations: 'h-full w-full overflow-y-scroll bg-gray-900 border-r border-gray-700',
+  conversationListTop: 'flex w-inherit fixed bg-gray-900 bg-opacity-70 border-r backdrop-blur-sm items-centers justify-between border-b z-10 p-1 sm:p-2 border-gray-700 shadow-2xl',
+  searchInput: 'w-full bg-gray-800 hover:border-blue-600 border border-gray-800 rounded-xl outline-none p-2 resize-none text-white',
+  conversationsContainer: 'p-2 pt-12 sm:pt-14',
+  elementsContainer: 'flex items-center p-1 rounded-xl sursor-pointer hover:bg-gray-800 cursor-pointer',
+  svgContainer: 'mr-2',
+  svg: 'invert opacity-60 rounded-full',
+  name: 'flex-1 h-full opacity-90',
+  post: 'opacity-60 text-sm',
+  dmTitle: 'opacity-40 font-bold my-3',
   icon: 'text-white opacity-60 cursor-pointer mr-2 flex items-center justify-center ml-2 sm:hidden'
 }
 
 const ConversationList = () => {
-  const {setIsLeftBar} = useContext(VartaContext)
-  const [dms, setDms] = useState([])
+  const { setIsLeftBar, userFriends, loadingFriends } = useContext(VartaContext)
 
-  const getDms = async () => {
-  // try {
-  //   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/getdms`)
+  const [searchValue, setSearchValue] = useState('')
+  const [friends, setFriends] = useState([])
 
-  //   setDms(await response.json())
-  //   console.log(dms)
-  // } catch (error) {
-  //   console.error(error)
-  // }
-}
-  useEffect(()=>{
-    getDms()
-  }, [])
+  useEffect(() => {
+    setFriends([...userFriends])
+  }, [userFriends])
+  
+
+  const onChange = (e) => {
+    setSearchValue(e.target.value)
+  }
+
+  useEffect(() => {
+    if (searchValue.length != 0) {
+      let newFriendsArray = [...userFriends]
+      for (let i = userFriends.length-1; i >= 0; i--) {
+        if (userFriends[i].name.toLowerCase().includes(searchValue.toLowerCase()) || userFriends[i].username.toLowerCase().includes(searchValue.toLowerCase())) {
+          continue
+        }
+        else {
+          newFriendsArray.splice(i,1)
+          continue
+        }
+      }
+      setFriends(newFriendsArray)
+    }
+
+    else {
+      setFriends([...userFriends])
+    }
+  }, [searchValue])
+
   return (
     <div className={styles.conversations}>
       <div className={styles.conversationListTop}>
-        <input className={styles.searchInput} placeholder='Find or start a conversation' />
-        <div onClick={()=>{setIsLeftBar(false)}} className={styles.icon}>
-          <AiOutlineClose size={24}/>
+        <input onChange={onChange} className={styles.searchInput} placeholder='Search your friend...' />
+        <div onClick={() => { setIsLeftBar(false) }} className={styles.icon}>
+          <AiOutlineClose size={24} />
         </div>
       </div>
 
       <div className={styles.conversationsContainer}>
-      <div className={styles.dmTitle}>FRIENDS</div>
+        <div className={styles.dmTitle}>FRIENDS</div>
 
-        <div className={styles.elementsContainer}>
-          <div className={styles.svgContainer}>
-            <Image
-              height={48}
-              width={48}
-              src={'/avatar-2.png'}
-              className={styles.svg}
-            />
-          </div>
-            <div className={styles.name}>
-              <p>Sambhav</p>
-              <p className={styles.post}>Elder</p>
-            </div>
-        </div>
 
-        <div className={styles.elementsContainer}>
-          <div className={styles.svgContainer}>
-            <Image
-              height={48}
-              width={48}
-              src={'/avatar-2.png'}
-              className={styles.svg}
-            />
-          </div>
-            <div className={styles.name}>
-              <p>Sambhav</p>
-              <p className={styles.post}>Elder</p>
-            </div>
-        </div>
-        
-        <div className={styles.dmTitle}>DIRECT MESSAGES</div>
-        
-        <div className={styles.elementsContainer}>
-          <div className={styles.svgContainer}>
-            <Image
-              height={48}
-              width={48}
-              src={'/avatar-2.png'}
-              className={styles.svg}
-            />
-          </div>
-            <div className={styles.name}>
-              <p>Sambhav</p>
-              <p className={styles.post}>Elder</p>
-            </div>
-        </div>
-        <div className={styles.elementsContainer}>
-          <div className={styles.svgContainer}>
-            <Image
-              height={48}
-              width={48}
-              src={'/avatar-2.png'}
-              className={styles.svg}
-            />
-          </div>
-            <div className={styles.name}>
-              <p>Sambhav</p>
-              <p className={styles.post}>Elder</p>
-            </div>
-        </div>
-        <div className={styles.elementsContainer}>
-          <div className={styles.svgContainer}>
-            <Image
-              height={48}
-              width={48}
-              src={'/avatar-2.png'}
-              className={styles.svg}
-            />
-          </div>
-            <div className={styles.name}>
-              <p>Sambhav</p>
-              <p className={styles.post}>Elder</p>
-            </div>
-        </div>
-        <div className={styles.elementsContainer}>
-          <div className={styles.svgContainer}>
-            <Image
-              height={48}
-              width={48}
-              src={'/avatar-2.png'}
-              className={styles.svg}
-            />
-          </div>
-            <div className={styles.name}>
-              <p>Sambhav</p>
-              <p className={styles.post}>Elder</p>
-            </div>
-        </div>
-        <div className={styles.elementsContainer}>
-          <div className={styles.svgContainer}>
-            <Image
-              height={48}
-              width={48}
-              src={'/avatar-2.png'}
-              className={styles.svg}
-            />
-          </div>
-            <div className={styles.name}>
-              <p>Sambhav</p>
-              <p className={styles.post}>Elder</p>
-            </div>
-        </div>
-        <div className={styles.elementsContainer}>
-          <div className={styles.svgContainer}>
-            <Image
-              height={48}
-              width={48}
-              src={'/avatar-2.png'}
-              className={styles.svg}
-            />
-          </div>
-            <div className={styles.name}>
-              <p>Sambhav</p>
-              <p className={styles.post}>Elder</p>
-            </div>
-        </div>
-        <div className={styles.elementsContainer}>
-          <div className={styles.svgContainer}>
-            <Image
-              height={48}
-              width={48}
-              src={'/avatar-2.png'}
-              className={styles.svg}
-            />
-          </div>
-            <div className={styles.name}>
-              <p>Sambhav</p>
-              <p className={styles.post}>Elder</p>
-            </div>
-        </div>
-        <div className={styles.elementsContainer}>
-          <div className={styles.svgContainer}>
-            <Image
-              height={48}
-              width={48}
-              src={'/avatar-2.png'}
-              className={styles.svg}
-            />
-          </div>
-            <div className={styles.name}>
-              <p>Sambhav</p>
-              <p className={styles.post}>Elder</p>
-            </div>
-        </div>
+        {
+          friends.length>0 ?
+            friends.map((item) => {
+              return <FriendCard key={item.username} name={item.name} username={item.username} avatarColor={item.avatarColor} />
+            })
+            :
+            <>
+              {
+                loadingFriends ?
+                  <AiOutlineLoading3Quarters className='animate-spin mx-auto my-4 opacity-60' size={24} />
+                  :
+                  <div className={`text-center font-bold my-4 opacity-40 text-sm`}>No friend found!</div>
+              }
+            </>
+        }
+
+
+
       </div>
-    </div>
+    </div >
   )
 }
 

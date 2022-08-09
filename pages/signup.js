@@ -64,7 +64,7 @@ const Signup = () => {
                   name="name"
                   type="text"
                   required
-                  className="rounded-lg w-full border-none outline-none p-3 h-11/12 resize-none text-white bg-gray-800 mb-2"
+                  className="rounded-xl border hover:border-blue-600 border-gray-800 w-full outline-none p-3 h-11/12 resize-none text-white bg-gray-800 mb-2"
                   placeholder="Full name"
                 />
               </div>
@@ -79,7 +79,7 @@ const Signup = () => {
                   name="username"
                   type="text"
                   required
-                  className="rounded-lg w-full border-none outline-none p-3 h-11/12 resize-none text-white bg-gray-800 mb-2"
+                  className="rounded-xl border hover:border-blue-600 border-gray-800 w-full outline-none p-3 h-11/12 resize-none text-white bg-gray-800 mb-2"
                   placeholder="Username"
                 />
               </div>
@@ -94,7 +94,7 @@ const Signup = () => {
                   name="email"
                   type="email"
                   required
-                  className="rounded-lg w-full border-none outline-none p-3 h-11/12 resize-none text-white bg-gray-800 mb-2"
+                  className="rounded-xl border hover:border-blue-600 border-gray-800 w-full outline-none p-3 h-11/12 resize-none text-white bg-gray-800 mb-2"
                   placeholder="Email address"
                 />
               </div>
@@ -110,7 +110,7 @@ const Signup = () => {
                   type="password"
                   required
                   minLength={6}
-                  className="mb-2 rounded-lg w-full border-none outline-none p-3 h-11/12 resize-none text-white bg-gray-800"
+                  className="mb-2 rounded-xl border hover:border-blue-600 border-gray-800 w-full outline-none p-3 h-11/12 resize-none text-white bg-gray-800"
                   placeholder="Password"
                 />
               </div>
@@ -123,10 +123,10 @@ const Signup = () => {
                   onChange={(e) => { setCpassword(e.target.value) }}
                   id="cpassword"
                   name="cpassword"
-                  type="cpassword"
+                  type="password"
                   required
                   minLength={6}
-                  className="rounded-lg w-full border-none outline-none p-3 h-11/12 resize-none text-white bg-gray-800"
+                  className="rounded-xl border hover:border-blue-600 border-gray-800 w-full outline-none p-3 h-11/12 resize-none text-white bg-gray-800"
                   placeholder="Confirm password"
                 />
               </div>
@@ -162,7 +162,7 @@ const Signup = () => {
               <button
                 disabled={signingup}
                 type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700"
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <MdSecurity className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" size={24} />

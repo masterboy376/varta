@@ -1,36 +1,29 @@
 import Image from 'next/image'
-import personPlus from '../public/icons/person-plus.svg'
-import video from '../public/icons/video.svg'
-import inbox from '../public/icons/inbox.svg'
-import phone from '../public/icons/phone.svg'
-import help from '../public/icons/help.svg'
-import pin from '../public/icons/pin.svg'
 import at from '../public/icons/at.svg'
-import ethLogo from '../public/eth.png'
 import { useContext } from 'react'
 import { VartaContext } from '../context/context'
 import { HiMenuAlt2 } from 'react-icons/hi'
 import { BsThreeDotsVertical } from 'react-icons/bs'
-import ReactTooltip from 'react-tooltip'
+import { FaUserCircle, FaUserPlus, FaPhoneVolume, FaVideo } from 'react-icons/fa'
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 
 const ChatHeader = () => {
   const styles = {
-    chatHeader: 'fixed top-0 right-0 w-full bg-opacity-70 backdrop-blur-sm sm:w-3/4 z-50 bg-gray-900 flex items-center justify between sm:p-2 p-3 border-b border-l border-gray-700 shadow-2xl z-10',
+    chatHeader: 'fixed top-0 right-0 w-full bg-opacity-70 backdrop-blur-sm sm:w-4/5 z-50 bg-gray-900 flex items-center justify between sm:p-2 p-3 border-b border-gray-700 shadow-2xl z-10',
     roomNameContainer: 'flex items-center flex-1',
     svg: 'w-6 invert opacity-60 cursor-pointer mr-2',
     roomName: 'sm:text-base text-sm',
     chatHeaderStatus: 'w-4 h-4 ml-2 rounded-full left-20',
-    connectedWallet: 'mr-2 bg-gray-700 p-2 rounded-full border border-gray-800 hidden sm:flex items-center',
-    button: 'mr-2 bg-blue-600 hover:bg-blue-700 p-2 rounded-xl cursor-pointer hidden sm:inline px-4',
+    button: 'mx-2 bg-blue-600 border border-blue-600 hover:border-blue-700 hover:bg-blue-700 p-2 rounded-xl cursor-pointer hidden sm:inline px-4',
     separator: 'mx-2',
     headerIconsContainer: 'group flex items-center',
-    headerItem: 'mr-2 hidden sm:flex flex-col items-center',
-    // headerItemSearch:'mr-2 flex flex-col items-center',
+    headerItem: 'mx-2 hidden sm:flex flex-col items-center',
     headerItemDesc: 'group-hover:opacity-100 absolute hidden z-30 bg-[#2f3136] border border-gray-900 p-1 text-sm rounded-xl top-14 right-[][4000px]',
     icon: 'text-white opacity-60 cursor-pointer mr-2 sm:hidden'
 
   }
-  const { roomName, isLoggedin, setIsLeftBar, setIsRightBar, logout, router } = useContext(VartaContext)
+  const { isLoggedin, setIsLeftBar, setIsRightBar, logout, setAddFriendModal, setPhoneModal, setUserModal, setVideoModal, router } = useContext(VartaContext)
 
   return (
     <div className={styles.chatHeader}>
@@ -40,72 +33,47 @@ const ChatHeader = () => {
       </div>
 
       <div className={styles.roomNameContainer}>
-        <Image height={20} width={20} src={at} className={styles.svg} alt='' />
-        <h3 className={styles.title}>{roomName}</h3>
-        <div className={styles.chatHeaderStatus} id='online' />
+        {router.query.user &&
+          <>
+            <Image height={20} width={20} src={at} className={styles.svg} alt='' />
+            <h3 className={styles.title}>{router.query.user}</h3>
+            <div className={styles.chatHeaderStatus} id='online' />
+          </>
+        }
       </div>
 
-      {isLoggedin && <div className={styles.button} onClick={logout}>
-          Log out
+      {router.query.user &&
+        <div className={styles.headerIconsContainer}>  
+        <Tippy content={'Phone'}>
+          <button onClick={() => { setPhoneModal(true) }} className={styles.headerItem}>
+            <FaPhoneVolume size={25} className={`opacity-70 cursor-pointer`} />
+          </button>
+        </Tippy>
+
+          <Tippy content={'Video call'}>
+            <button onClick={() => { setVideoModal(true) }} className={styles.headerItem}>
+              <FaVideo size={25} className={`opacity-70 cursor-pointer`} />
+            </button>
+          </Tippy>
         </div>
       }
 
-      <div className={styles.headerIconsContainer}>
+      <Tippy content={'Add friend'}>
+        <button onClick={() => { setAddFriendModal(true) }} className={styles.headerItem}>
+          <FaUserPlus size={25} className={`opacity-70 cursor-pointer`} />
+        </button>
+      </Tippy>
 
-        <div className={styles.headerItem}>
-          <Image
-          data-tip
-          data-event-off
-          data-for="phone"
-            height={25}
-            width={25}
-            src={phone}
-            className={styles.svg}
-            alt=''
-          />
-          {/* <span className={styles.headerItemDesc}>Phone call</span> */}
-        </div>
+      <Tippy content={'Your details'}>
+        <button onClick={() => { setUserModal(true) }} className={styles.headerItem}>
+          <FaUserCircle size={25} className={`opacity-70 cursor-pointer`} />
+        </button>
+      </Tippy>
 
-        <div className={styles.headerItem}>
-          <Image
-          data-tip
-          data-event-off
-          data-for="video"
-            height={25}
-            width={25}
-            src={video}
-            className={styles.svg}
-            alt=''
-          />
-        </div>
-
+      {isLoggedin && <div className={styles.button} onClick={logout}>
+        Log out
       </div>
-
-      <div className={styles.headerItem}>
-        <Image 
-        data-tip
-        onMouseLeave={(e)=>{ReactTooltip.hide(e.target)}}
-        data-event-off='click'
-        data-for="pinned"
-         height={25}
-          width={25} 
-          src={pin}
-           className={styles.svg}
-            alt='' />
-      </div>
-
-      <button onClick={()=>{router.push(`/?addFriend=true`)}} className={styles.headerItem}>
-        <Image
-        data-tip
-        data-for="addFriend"
-          height={25}
-          width={25}
-          src={personPlus}
-          className={styles.svg}
-          alt=''
-        />
-        {/* <span className={styles.headerItemDesc}>Video call</span> */}
-      </button>
+      }
 
       <div onClick={() => { setIsRightBar(true) }} className={styles.icon}>
         <BsThreeDotsVertical size={24} />

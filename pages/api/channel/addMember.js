@@ -25,6 +25,9 @@ const handler = async (req, res) => {
                     newMembers.push(req.userId)
                     newChannels.push(channel._id)
                 }
+                else{
+                    return res.status(400).json({ success: false, error: "you are already in this channel!" });
+                }
                 channel = await Channel.findOneAndUpdate({inviteKey:req.body.inviteKey}, {members: newMembers})
                 user = await User.findByIdAndUpdate(req.userId, {channels: newChannels})
                 return res.status(200).json({ success: true, channel, user });

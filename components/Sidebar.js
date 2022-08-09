@@ -1,6 +1,4 @@
-// import styles from '../styles/sidebar.module.css'
 import { useEffect, useState, useContext } from 'react'
-import { useRouter } from 'next/router'
 import RoomAvatar from './RoomAvatar'
 import SideOption from './sideOption'
 import { VartaContext } from '../context/context'
@@ -10,37 +8,10 @@ const styles = {
 }
 
 const Sidebar = () => {
-  const router = useRouter()
-  const {channels, setChannels} = useContext(VartaContext)
-  // const [channels, setChannels] = useState([])
-
-  // useEffect(()=>{async () => {
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/getchannels`,
-  //     )
-
-  //     const data = await response.json()
-  //     setChannels(data)
-  //     console.log(channels)
-
-  //     router.push(`?channel=${data[0].roomId}&name=${data[0].roomName}`)
-  //     console.log(channels)
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }}, [])
+  const {router} = useContext(VartaContext)
 
   return (
     <div className={styles.wrapper}>
-      {/* {Array.from(channels).map((channel, index) => (
-        <RoomAvatar
-          key={index}
-          id={channel.roomId}
-          avatar={channel.avatar}
-          name={channel.roomName}
-        />
-      ))} */}
       <RoomAvatar
           key={1}
           id={123456}

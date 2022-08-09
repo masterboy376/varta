@@ -30,7 +30,11 @@ const UserSchema = new Schema({
         {
             type: String,
         }
-    ]
+    ],
+    avatarColor:{
+        type: String,
+        required: true,
+    },
 }, { timestamps: true });
 
 mongoose.models = {}

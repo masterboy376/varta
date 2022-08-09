@@ -6,9 +6,14 @@ const ChannelSchema = new Schema({
     name:{
         type: String,
         required: true,
+        unique: true,
+    },
+    avatarColor:{
+        type: String,
+        required: true,
     },
     description:{
-        type:string,
+        type:String,
         required:true
     },
     hostId:{
@@ -23,8 +28,6 @@ const ChannelSchema = new Schema({
     members:[
             {
                 type: String,
-                required: true,
-                unique: true,
             }
     ],
   } , {timestamps: true});

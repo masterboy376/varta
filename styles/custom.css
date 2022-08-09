@@ -91,7 +91,35 @@ input[type='search'] {
   color: #fff;
 }
 
+/* ----------------------------------------------------- */
 .w-inherit{
   width:inherit;
+}
+.red{
+  background-color: rgb(220, 38, 38);
+}
+.orange{
+  background-color: rgb(235, 101, 30);
+}
+.yellow{
+  background-color: rgb(234, 179, 8);
+}
+.green{
+  background-color: rgb(34, 197, 94);
+}
+.blue{
+  background-color: rgb(6, 182, 212);
+}
+.pink{
+  background-color: rgb(244, 114, 182);
+}
+.purple{
+  background-color: rgb(139, 92, 246);
+}
+.black{
+  background-color: rgb(82, 82, 91);
+}
+.white{
+  background-color: rgb(241, 241, 255);
 }
 

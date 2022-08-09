@@ -12,7 +12,7 @@ const handler = async (req, res) => {
             if (!user1) {
                 return res.status(400).json({ success: false, error: "user not found!" });
             }
-            let user2 = await User.findById( req.body_friendId );
+            let user2 = await User.findById( req.body.friendId );
             if (!user2) {
                 return res.status(400).json({ success: false, error: "user not found to be added as a friend!" });
             }
@@ -21,12 +21,20 @@ const handler = async (req, res) => {
             let newUser1Friends = [...user1.friends]
             let newUser2Friends = [...user2.friends]
             if(newUser1Friends.includes(req.body.friendId) && newUser2Friends.includes(req.userId)){
-                newUser1Friends.remove(req.body.friendId)
-                newUser2Friends.remove(req.userId)
+                for (let i in newUser1Friends){
+                    if(newUser1Friends[i]===req.body.friendId){
+                        newUser1Friends.splice(i,1)
+                    }
+                }
+                for (let i in newUser2Friends){
+                    if(newUser2Friends[i]===req.userId){
+                        newUser2Friends.splice(i,1)
+                    }
+                }
             }
 
-            user1 = User.findByIdAndUpdate(req.userId, {friends:newUser1Friends})
-            user1 = User.findByIdAndUpdate(req.body.friendId, {friends:newUser1Friends})
+            user1 = await User.findByIdAndUpdate(req.userId, {friends:newUser1Friends})
+            user2 = await User.findByIdAndUpdate(req.body.friendId, {friends:newUser2Friends})
             return res.status(200).json({ success: true, user1, user2 });
             
         }

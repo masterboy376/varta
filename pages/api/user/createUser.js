@@ -3,6 +3,7 @@ import connectDb from '../../../middleware/connect'
 import jwt from 'jsonwebtoken'
 import cryptoJs from 'crypto-js'
 
+const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'pink', 'purple', 'black', 'white']
 
 const handler = async (req, res) => {
     if (req.method == 'POST') {
@@ -21,7 +22,8 @@ const handler = async (req, res) => {
                 email: req.body.email,
                 password: securePassword,
                 friends:[],
-                channels:[]
+                channels:[],
+                avatarColor:colors[Math.floor(Math.random() * 9)]
             })
 
             const authToken = jwt.sign( {id: user._id} , process.env.JWT_SIGN );
