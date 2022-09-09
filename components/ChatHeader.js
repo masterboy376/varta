@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import at from '../public/icons/at.svg'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { VartaContext } from '../context/context'
 import { HiMenuAlt2 } from 'react-icons/hi'
 import { BsThreeDotsVertical } from 'react-icons/bs'
@@ -14,7 +14,6 @@ const ChatHeader = () => {
     roomNameContainer: 'flex items-center flex-1',
     svg: 'w-6 invert opacity-60 cursor-pointer mr-2',
     roomName: 'sm:text-base text-sm',
-    chatHeaderStatus: 'w-4 h-4 ml-2 rounded-full left-20',
     button: 'mx-2 bg-blue-600 border border-blue-600 hover:border-blue-700 hover:bg-blue-700 p-2 rounded-xl cursor-pointer hidden sm:inline px-4',
     separator: 'mx-2',
     headerIconsContainer: 'group flex items-center',
@@ -23,7 +22,22 @@ const ChatHeader = () => {
     icon: 'text-white opacity-60 cursor-pointer mr-2 sm:hidden'
 
   }
-  const { isLoggedin, setIsLeftBar, setIsRightBar, logout, setAddFriendModal, setPhoneModal, setUserModal, setVideoModal, router } = useContext(VartaContext)
+  const { isLoggedin, setIsLeftBar, setIsRightBar, logout, setAddFriendModal, setPhoneModal, setUserModal, setVideoModal, router, getUserByUsername, friend, setFriend } = useContext(VartaContext)
+
+  const init = async ()=>{
+    let parsedData = await getUserByUsername(router.query.user)
+    if (parsedData.success){
+      setFriend(parsedData.user)
+    }
+    else{
+      setFriend({status:false})
+    }
+  }
+
+  useEffect(() => {
+    init()
+  }, [router.query.user])
+  
 
   return (
     <div className={styles.chatHeader}>
@@ -37,7 +51,7 @@ const ChatHeader = () => {
           <>
             <Image height={20} width={20} src={at} className={styles.svg} alt='' />
             <h3 className={styles.title}>{router.query.user}</h3>
-            <div className={styles.chatHeaderStatus} id='online' />
+            <div className={`ml-2 rounded-full p-1 ${friend.status?'bg-green-600':'bg-gray-700'} border-gray-700 border-4`} />
           </>
         }
       </div>

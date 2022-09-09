@@ -25,13 +25,15 @@ const customStyles = {
 }
 
 const UserDetails = () => {
-    const { setUserModal, userData, updateUser, getUserByAuthToken, userFriends, loadingFriends } = useContext(VartaContext)
+    const { setUserModal, userData, updateUser, getUserByAuthToken, userFriends, loadingFriends, alertSuccess, verifyPassword } = useContext(VartaContext)
 
     const [processing, setProcessing] = useState(false)
     const [active, setActive] = useState(0)
     const [newData, setNewData] = useState({})
     const [hasChanged, setHasChanged] = useState(false)
-    const [verifyModal, setVerifyModal] = useState(false)
+    const [reveal, setReveal] = useState(false)
+    const [verifyPasswordForChange, setVerifyPasswordForChange] = useState(false)
+    const [verifyPasswordForReveal, setVerifyPasswordForReveal] = useState(false)
     const [password, setPassword] = useState('')
     const [searchValue, setSearchValue] = useState('')
     const [friends, setFriends] = useState([])
@@ -48,14 +50,34 @@ const UserDetails = () => {
 
     const onCancel = () => {
         setNewData({ name: userData.name, username: userData.username, email: userData.email, avatarColor: userData.avatarColor })
+        setHasChanged(false)
     }
 
     const onSubmit = async (e) => {
-        setVerifyModal(false)
+        e.preventDefault()
+        setVerifyPasswordForChange(false)
         setProcessing(true)
         await updateUser({ newUserData: newData, authToken: localStorage.getItem("authToken"), password })
         await getUserByAuthToken()
         setProcessing(false)
+        setHasChanged(false)
+    }
+
+    const onReveal = async (e) => {
+        e.preventDefault()
+        const parsedData = await verifyPassword(password)
+        if(parsedData.success){
+            setVerifyPasswordForReveal(false)
+            setReveal(true)
+            setTimeout(() => {
+                setReveal(false)
+            }, 30000);
+        }
+    }
+
+    const copyId = async () => {
+        navigator.clipboard.writeText(userData._id)
+        alertSuccess("Id copied to clip board")
     }
 
     useEffect(() => {
@@ -101,7 +123,19 @@ const UserDetails = () => {
                 </div>
 
                 {active === 0 && newData.avatarColor && <>
-                    <div className="p-4 flex flex-col justify-between items-center w-full pb-2 space-y-3">
+
+                    <div className="px-4 flex flex-col justify-between items-center w-full pb-2 space-y-3">
+
+                        <div onClick={() => {
+                            reveal ?
+                                copyId()
+                                :
+                                setVerifyPasswordForReveal(true)
+                        }}
+                            className={`w-2/3 text-center cursor-pointer mx-auto text-white border-gray-800 hover:border-blue-600 bg-gray-800 rounded-lg border py-2 ${reveal ? 'font-bold' : ''}`}>
+                            {reveal ? userData._id : 'Tap here to reveal your ID for 30 sec'}
+                        </div>
+
                         <div className={`sm:w-64 sm:h-64 w-32 h-32 rounded-full flex items-center text-gray-900 justify-center font-bold text-9xl ${newData.avatarColor}`}>
                             {newData.name[0] ? newData.name[0].toUpperCase() : '-_-'}
                         </div>
@@ -138,9 +172,9 @@ const UserDetails = () => {
                                         'Cancel'
                                     }
                                 </button>
-                                <button disabled={!hasChanged} type='button' onClick={() => { setVerifyModal(true) }} className={`bg-blue-600 ${hasChanged ? ' hover:bg-blue-700' : 'opacity-70 cursor-not-allowed'} p-2 w-auto rounded-xl`}>
+                                <button disabled={!hasChanged} type='button' onClick={() => { setVerifyPasswordForChange(true) }} className={`bg-blue-600 ${hasChanged ? ' hover:bg-blue-700' : 'opacity-70 cursor-not-allowed'} p-2 w-auto rounded-xl`}>
                                     {processing ?
-                                        <AiOutlineLoading3Quarters className='animate-spin mx-auto' size={24} />
+                                        <AiOutlineLoading3Quarters className='animate-spin mx-auto' size={20} />
                                         :
                                         'Save'
                                     }
@@ -149,11 +183,32 @@ const UserDetails = () => {
                         </div>
 
                     </div>
-                    <Modal isOpen={verifyModal} onRequestClose={() => { setVerifyModal(false) }} style={customStyles}>
+                    <Modal isOpen={verifyPasswordForReveal} onRequestClose={() => { setVerifyPasswordForReveal(false) }} style={customStyles}>
                         <div className={`w-full p-4`}>
                             <div className="flex items-center justify-between w-full pb-4">
                                 <span className="text-lg font-bold opacity-40">Verify your password</span>
-                                <AiOutlineClose onClick={() => { setVerifyModal(false) }} className={`opacity-70`} size={20} />
+                                <AiOutlineClose onClick={() => { setVerifyPasswordForReveal(false) }} className={`opacity-70`} size={20} />
+                            </div>
+                            <form onSubmit={onReveal} action="#">
+                                <div className="flex items-center justify-between w-full pb-4">
+                                    <input onChange={(e) => { setPassword(e.target.value) }} type="password" placeholder='Your password' id="password" name='password' className="block p-4 h-full w-full rounded-l-xl border sm:text-md outline-none hover:border-blue-600 bg-gray-800 border-gray-800 text-white" />
+                                    <button type="submit" className={` bg-blue-600 hover:bg-blue-700 p-4 rounded-r-xl cursor-pointer sm:w-auto`}>
+                                        {processing ?
+                                            <AiOutlineLoading3Quarters className='animate-spin mx-auto' size={24} />
+                                            :
+                                            'Ok'
+                                        }
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </Modal>
+
+                    <Modal isOpen={verifyPasswordForChange} onRequestClose={() => { setVerifyPasswordForChange(false) }} style={customStyles}>
+                        <div className={`w-full p-4`}>
+                            <div className="flex items-center justify-between w-full pb-4">
+                                <span className="text-lg font-bold opacity-40">Verify your password</span>
+                                <AiOutlineClose onClick={() => { setVerifyPasswordForChange(false) }} className={`opacity-70`} size={20} />
                             </div>
                             <form onSubmit={onSubmit} action="#">
                                 <div className="flex items-center justify-between w-full pb-4">

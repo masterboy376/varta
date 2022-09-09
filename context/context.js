@@ -1,6 +1,8 @@
-import { createContext, useState, useEffect, useReducer } from 'react'
+import { createContext, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify';
+
+import { io } from "socket.io-client";
 
 export const VartaContext = createContext()
 
@@ -8,6 +10,8 @@ export const VartaProvider = ({ children }) => {
   // -------------------------------------------
 
   //states
+  const socket = io('http://localhost:8000');
+
   const router = useRouter()
   const [loadingFriends, setLoadingFriends] = useState(false)
   const [isLoggedin, setIsLoggedin] = useState(false)
@@ -21,7 +25,20 @@ export const VartaProvider = ({ children }) => {
 
   const [userData, setUserData] = useState({})
   const [userFriends, setUserFriends] = useState([])
+  const [friend, setFriend] = useState('')
 
+  const [messages, setMessages] = useState([])
+
+  // -------------------------------------------
+  // socket
+  // socket.on('online', userId =>{
+  //   updateUserStatus(localStorage.getItem('authToken'), true)
+  // })
+  
+  // socket.on('offline', userId =>{
+  //   updateUserStatus(localStorage.getItem('authToken'), false)
+  // })
+  
   // -------------------------------------------
   // useEffects 
   useEffect(() => {
@@ -38,6 +55,15 @@ export const VartaProvider = ({ children }) => {
     }
     init()
   }, [isLoggedin])
+
+  useEffect(() => {
+    if(isLoggedin){
+      if(userData._id){
+        console.log(userData._id)
+        socket.emit('connected', userData._id);
+      }
+    }
+  }, [userData])
 
 
   // -------------------------------------------
@@ -90,7 +116,6 @@ export const VartaProvider = ({ children }) => {
       setUserData(parsedData.user)
       setLoadingFriends(false)
       getUsersByIds(parsedData.user.friends)
-      console.log(parsedData.user)
     }
     else{
       setLoadingFriends(false)
@@ -111,7 +136,6 @@ export const VartaProvider = ({ children }) => {
     const parsedData = await rawData.json()
     if(parsedData.success){
       setUserFriends(parsedData.userData)
-      console.log(parsedData.userData)
     }
     setLoadingFriends(false)
     return parsedData
@@ -125,6 +149,19 @@ export const VartaProvider = ({ children }) => {
         'Content-type': 'application/json'
       },
       body: JSON.stringify({userId:credentials})
+    })
+    const parsedData = await rawData.json()
+    return parsedData
+  }
+
+  //get user by username
+  const getUserByUsername = async (credentials) => {
+    const rawData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/getUserByUsername`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({authToken:localStorage.getItem("authToken"), username:credentials})
     })
     const parsedData = await rawData.json()
     return parsedData
@@ -150,6 +187,22 @@ export const VartaProvider = ({ children }) => {
       localStorage.removeItem('authToken')
       alertError(parsedData.error)
       setIsLoggedin(false)
+    }
+    return parsedData
+  }
+
+  // verify password 
+  const verifyPassword = async (password) => {
+    const rawData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/verifyPassword`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({authToken: localStorage.getItem("authToken"), password})
+    })
+    const parsedData = await rawData.json()
+    if (!parsedData.success) {
+      alertError(parsedData.error)
     }
     return parsedData
   }
@@ -212,7 +265,6 @@ export const VartaProvider = ({ children }) => {
 
   // reset password
   const resetPassword = async (credentials) => {
-    console.log(credentials)
     const rawData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/resetPassword`, {
       method: 'POST',
       headers: {
@@ -374,6 +426,7 @@ export const VartaProvider = ({ children }) => {
         userData,
         userFriends,
         getUserById,
+        getUserByUsername,
         getUsersByIds,
         getUserByAuthToken,
         userLogin,
@@ -386,6 +439,14 @@ export const VartaProvider = ({ children }) => {
         updateUser,
         addFriend,
         removeFriend,
+        alertSuccess,
+        alertError,
+        verifyPassword,
+        friend,
+        setFriend,
+        socket,
+        messages,
+        setMessages
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { VartaContext } from '../context/context'
 import {RiSendPlaneFill} from 'react-icons/ri'
 
@@ -10,26 +10,43 @@ const styles = {
   svg:'w-6 opacity-60 cursor-pointer hover:text-blue-500 hover:opacity-100 transition-all duration-300 ',
 }
 
-const MessageForm = () => {
-  const {} = useContext(VartaContext)
+const MessageForm = ({to}) => {
+  const {socket, userData, friend, messages, setMessages} = useContext(VartaContext)
+  const [messageBody, setMessageBody] = useState('')
+
+  const onChange = (e)=>{
+    setMessageBody(e.target.value)
+  }
+
+  const onSubmit = (e)=>{
+    e.preventDefault()
+    let data = {message:messageBody, from:userData._id, to:friend._id, date:(new Date()).getTime()}
+    socket.emit('send', data);
+    let tempArray = [...messages]
+    tempArray.push(data)
+    setMessages(tempArray)
+    setMessageBody('')
+  }
 
   return (
-    <form
+    <form onSubmit={onSubmit}
       className={styles.chatInputContainer}
     >
       <div className={styles.chatInputWrapper}>
         <input
+        onChange={onChange}
         id='message'
         name='message'
           type='text'
           className={styles.chatInput}
-          value={''}
+          value={messageBody}
           disabled={false}
           placeholder={'type ypur message here'}
+          required
         />
-        <div className={styles.svgContainer}>
+        <button type='submit' disabled={messageBody.length==0} className={styles.svgContainer}>
           <RiSendPlaneFill className={styles.svg} size={40}/>
-        </div>
+        </button>
         
       </div>
     </form>
